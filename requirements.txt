@@ -1,0 +1,5 @@
+Flask
+openai
+numpy
+scikit-learn
+paho-mqtt

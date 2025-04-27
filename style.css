@@ -1,0 +1,109 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+  }
+  
+  .chat-container, .sensor-graphs, .system-alerts, .usage-prediction, .prediction-section, .issue-report-form {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.08);
+  }
+  
+  .sensor-alerts-container {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .sensor-graphs canvas {
+    height: 150px !important;
+  }
+  
+  .usage-prediction canvas {
+    height: 200px !important;
+  }
+  
+  .usage-alerts {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .system-alerts {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
+    height: calc(100% + 2.3cm); /* Add 2.5cm extra height */
+    box-sizing: border-box; /* Ensure padding doesn't overflow */
+  }
+  
+  .chat-box {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+  
+  .message {
+    margin: 10px 0;
+  }
+  .user .text {
+    background: #dcf8c6;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  .bot .text {
+    background: #f1f0f0;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  .time {
+    font-size: 10px;
+    color: gray;
+  }
+  
+  .input-form {
+    display: flex;
+  }
+  input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px 0 0 10px;
+  }
+  button {
+    padding: 10px;
+    background: #00a884;
+    border: none;
+    color: white;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+  }
+  
+  .bottom-container {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+  }
+  
+  .refresh-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .refresh-btn:hover {
+    background-color: #0056b3;
+  }

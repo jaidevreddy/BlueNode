@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WaterSense Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="dashboard-container">
+
+  <!-- WaterSense AI Chat -->
+  <div class="chat-container">
+    <h2>AI Chat</h2>
+    <div class="chat-box">
+      {% for msg in chat_history %}
+      <div class="message {{ msg.sender }}">
+        <div class="text">{{ msg.text }}</div>
+        <div class="time">{{ msg.time }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <form method="post" class="input-form">
+      <input type="text" name="message" placeholder="Ask a question..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Sensor and Alerts -->
+  <div class="sensor-alerts-container">
+    <div class="sensor-graphs">
+      <h2>Live Sensor Data</h2>
+      <canvas id="tdsChart"></canvas>
+      <canvas id="temperatureChart"></canvas>
+      <canvas id="tankChart"></canvas>
+    </div>
+
+    <div class="usage-alerts">
+      <div class="usage-prediction">
+        <h2>Water Usage Prediction</h2>
+        <canvas id="usageChart"></canvas>
+      </div>
+      <div class="system-alerts">
+        <h2>System Status</h2>
+        <div id="alerts">No alerts currently.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom Section -->
+<div class="bottom-container">
+  <div class="prediction-section">
+    <h2>Future Water Availability</h2>
+    <button class="refresh-btn" onclick="location.reload()">REFRESH</button>
+    {% if predicted_levels is not none %}
+    <p>Predicted tank level:</p>
+    <ul>
+      <li>In 2 hours: {{ predicted_levels[0]|round(2) }}%</li>
+      <li>In 4 hours: {{ predicted_levels[1]|round(2) }}%</li>
+      <li>In 6 hours: {{ predicted_levels[2]|round(2) }}%</li>
+    </ul>
+    {% if empty_time %}
+    <p><strong>Estimated tank empty time:</strong> {{ empty_time.strftime('%I:%M %p') }}</p>
+    {% else %}
+    <p><strong>Tank is not emptying currently.</strong></p>
+    {% endif %}
+    {% else %}
+    <p>Need more data to predict.</p>
+    {% endif %}
+  </div>
+
+  <div class="issue-report-form">
+    <h2>Report an Issue</h2>
+    <form id="reportForm">
+      <input type="text" placeholder="Describe the issue..." required>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+<!-- JavaScript Section -->
+<script>
+// Graphs
+const tdsChart = new Chart(document.getElementById('tdsChart'), {
+  type: 'line',
+  data: { labels: [], datasets: [{ label: 'TDS (ppm)', data: [], borderColor: 'blue', fill: false }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true, suggestedMin: 0 } } }
+});
+const temperatureChart = new Chart(document.getElementById('temperatureChart'), {
+  type: 'line',
+  data: { labels: [], datasets: [{ label: 'Temperature (°C)', data: [], borderColor: 'red', fill: false }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true, suggestedMin: 0 } } }
+});
+const tankChart = new Chart(document.getElementById('tankChart'), {
+  type: 'line',
+  data: { labels: [], datasets: [{ label: 'Tank Level (%)', data: [], borderColor: 'green', fill: false }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true, suggestedMin: 0 } } }
+});
+
+{% if usage_predictions is defined %}
+const usageChart = new Chart(document.getElementById('usageChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{
+      label: 'Water Usage (Litres)',
+      data: {{ usage_predictions | tojson | safe }},
+      backgroundColor: 'black',
+      borderRadius: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, suggestedMin: 0 } }
+  }
+});
+{% endif %}
+
+// Sensor Updater
+function fetchSensorData() {
+  fetch('/latest-tds')
+    .then(response => response.json())
+    .then(data => {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+
+      tdsChart.data.labels.push(time);
+      tdsChart.data.datasets[0].data.push(data.tds);
+
+      const temp = (Math.random() * (35 - 15) + 15).toFixed(2);
+      const tank = Math.floor(Math.random() * (100 - 10) + 10);
+
+      temperatureChart.data.labels.push(time);
+      temperatureChart.data.datasets[0].data.push(temp);
+      tankChart.data.labels.push(time);
+      tankChart.data.datasets[0].data.push(tank);
+
+      if (tdsChart.data.labels.length > 7) {
+        tdsChart.data.labels.shift();
+        tdsChart.data.datasets[0].data.shift();
+        temperatureChart.data.labels.shift();
+        temperatureChart.data.datasets[0].data.shift();
+        tankChart.data.labels.shift();
+        tankChart.data.datasets[0].data.shift();
+      }
+
+      tdsChart.update();
+      temperatureChart.update();
+      tankChart.update();
+
+      const alertBox = document.getElementById('alerts');
+      if (data.tds > 30) {
+        alertBox.innerHTML = `High TDS detected: ${data.tds.toFixed(2)} ppm`;
+        alertBox.style.color = "red";
+      } else {
+        alertBox.innerHTML = "Water quality is normal.";
+        alertBox.style.color = "green";
+      }
+    })
+    .catch(console.error);
+}
+setInterval(fetchSensorData, 3000);
+
+// Issue reporting
+document.getElementById('reportForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  alert('Issue reported successfully!');
+  this.reset();
+});
+</script>
+
+</body>
+</html>
