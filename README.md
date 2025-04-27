@@ -13,7 +13,7 @@ It connects to an ESP32-based TDS sensor to display live water quality metrics, 
 - Live Graphs for TDS, Temperature, and Tank Level
 - System Alerts triggered if TDS exceeds safe drinking limits
 - Tank Empty Time Prediction using simple Linear Regression
-- Water Usage Forecasting using a lightweight ML model
+- Water Usage Forecasting using simulated data 
 - Interactive Issue Reporting Form
 - Responsive and modern dashboard design
 
