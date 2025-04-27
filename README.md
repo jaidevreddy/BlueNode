@@ -1,24 +1,42 @@
 # BlueNode
 
-**BlueNode** is a Smart Water Quality Monitoring and Prediction Dashboard built with Flask, MQTT, OpenAI GPT-4o, and real-time Machine Learning. It combines sensor data with AI-driven predictions to improve water management.
+**BlueNode** is a Smart Water Quality Monitoring, Prediction, and Assistance Dashboard built with Flask, MQTT, OpenAI GPT-4o, and real-time Machine Learning.  
+It connects to an ESP32-based TDS sensor to display live water quality metrics, predicts future water availability, and features a built-in AI chatbot for real-time guidance based on sensor data.
+
+---
 
 ## Features
 
-- Live real-time graphs for TDS, Temperature, and Tank Level
-- WaterSense AI Chatbot powered by OpenAI GPT-4o
-- System Alerts when unsafe TDS levels are detected
-- Future Tank Level Predictions using Linear Regression
-- Water Usage Prediction with a lightweight Machine Learning model
-- Issue Reporting Form for users
-- Responsive and minimalistic dashboard design
+- Real-time TDS monitoring from ESP32 sensor via MQTT
+- Simulated Temperature and Tank Level readings
+- AI-powered **WaterSense Chatbot** using OpenAI GPT-4o, answering user queries based on live sensor data
+- Live Graphs for TDS, Temperature, and Tank Level
+- System Alerts triggered if TDS exceeds safe drinking limits
+- Tank Empty Time Prediction using simple Linear Regression
+- Water Usage Forecasting using a lightweight ML model
+- Interactive Issue Reporting Form
+- Responsive and modern dashboard design
+
+---
+
+## Important Details
+
+- **TDS values** are **real-time readings** from an **ESP32** and **TDS sensor**, sent using **MQTT**.
+- **Temperature** and **Tank Level** are **randomly simulated** (for now, to simulate full functionality).
+- **ESP32 setup** is required for TDS monitoring.
+- **AI Chatbot** generates human-like, precise, and safe water-related responses using **OpenAI GPT-4o** based on live sensor readings.
+
+---
 
 ## Tech Stack
 
-- **Backend:** Flask, Python
+- **Backend:** Flask (Python)
 - **Frontend:** HTML, CSS, JavaScript (Chart.js)
-- **AI Integration:** OpenAI API (GPT-4o)
-- **IoT Communication:** MQTT (ESP32 with TDS Sensor)
+- **AI Integration:** OpenAI GPT-4o
+- **IoT Communication:** MQTT with ESP32
 - **Machine Learning:** scikit-learn (Linear Regression)
+
+---
 
 ## Setup Instructions
 
@@ -33,7 +51,7 @@ cd BlueNode
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate    # For Windows: venv\Scripts\activate
+source venv/bin/activate    # On Windows: venv\Scripts\activate
 ```
 
 ### 3. Install Dependencies
@@ -54,13 +72,11 @@ python-dotenv
 
 ### 4. Configure Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file:
 
 ```
 OPENAI_API_KEY=your_openai_api_key_here
 ```
-
-Never push your `.env` file to GitHub for security reasons.
 
 ### 5. Run the Application
 
@@ -68,21 +84,36 @@ Never push your `.env` file to GitHub for security reasons.
 python app.py
 ```
 
-Then open your browser at:
+Visit:
 
 ```
 http://127.0.0.1:5000
 ```
 
-## MQTT Setup
+---
 
-Make sure your ESP32 device is publishing TDS sensor data using:
+## ESP32 and TDS Sensor Setup
 
-- **Broker IP:** Your laptop's local IP (e.g., 192.168.x.x)
-- **Port:** 1883
+- **Microcontroller:** ESP32
+- **Sensor:** TDS Sensor Module
+- **Communication:** MQTT
 - **Topic:** `sensor/tds`
 
-The dashboard will automatically reflect live sensor data.
+Your ESP32 must:
+
+- Connect to the same Wi-Fi network as your laptop
+- Publish TDS values to the MQTT broker on port 1883
+- Broker Address: your laptop's local IP (example: `192.168.x.x`)
+
+Example Arduino MQTT Publish Code Snippet:
+
+```cpp
+client.publish("sensor/tds", String(tdsValue).c_str());
+```
+
+Ensure Mosquitto or another MQTT broker is running locally.
+
+---
 
 ## Project Structure
 
@@ -97,20 +128,26 @@ BlueNode/
 └── README.md
 ```
 
-## Future Improvements
+---
 
-- Historical water quality reporting
-- SMS and email system alerts
-- Smart home integration
-- Predictive maintenance notifications
+## Future Enhancements
+
+- Replace simulated Temperature and Tank Level with actual sensors
+- Notification system (SMS/Email) for water quality alerts
+- Data history dashboard for analysis
+- Full smart home integration (Home Assistant, Alexa)
+
+---
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
+---
+
 ## Author
 
-Developed by 
+Developed and maintained by 
 K Jaidev Shankar Reddy,
 Adoksh M Bharadwaj,
 Manvitha R Kabbathi and
